@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SpaceCorps.Business.Authorization;
 using SpaceCorps.Business.Db;
 using SpaceCorps.Business.Dto.Authorization;
 
@@ -12,9 +11,9 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
     private readonly DatabaseContext _context = context;
 
     [HttpPost("create")]
-    public IActionResult CreateUser([FromBody] CreateUserRequest request)
+    public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserRequest request)
     {
-        var response = _context.CreateUser(request);
+        var response = await _context.CreateUserAsync(request);
 
         return response.ErrorCode switch
         {

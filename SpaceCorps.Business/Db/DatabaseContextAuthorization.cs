@@ -6,7 +6,7 @@ namespace SpaceCorps.Business.Db;
 
 public partial class DatabaseContext
 {
-    public DbUserCredentialsResponse CreateUser(CreateUserRequest request)
+    public async Task<DbUserCredentialsResponse> CreateUserAsync(CreateUserRequest request)
     {
         if (UserCredentials.Any(u => u.Email == request.Email))
         {
@@ -15,8 +15,10 @@ public partial class DatabaseContext
 
         var userCredential = new UserCredential(request.Email, request.Password);
         UserCredentials.Add(userCredential);
-        SaveChanges();
+        await SaveChangesAsync();
 
         return new DbUserCredentialsResponse(DbErrorCode.UserCreated, userCredential);
     }
+
+
 }
