@@ -23,7 +23,7 @@ public partial class DatabaseContext
 
     public async Task<DbUserVerifyPasswordResponse> VerifyPasswordAsync(VerifyPasswordRequest request)
     {
-        if(!UserCredentials.Any(u => u.Email == request.Email))
+        if (!UserCredentials.Any(u => u.Email == request.Email))
         {
             return new DbUserVerifyPasswordResponse(DbErrorCode.UserNotFound, null);
         }
@@ -37,5 +37,13 @@ public partial class DatabaseContext
 
         return new DbUserVerifyPasswordResponse(DbErrorCode.Ok, userCredential.Email);
 
+    }
+
+    public async Task<DbUserCredentialsResponse> GetUserByIdAsync(int id)
+    {
+        var userCredential = await UserCredentials.FindAsync(id);
+        return userCredential == null
+            ? new DbUserCredentialsResponse(DbErrorCode.UserNotFound, null)
+            : new DbUserCredentialsResponse(DbErrorCode.Ok, userCredential);
     }
 }

@@ -25,13 +25,14 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUser(int id)
     {
-        var userCredential = await _context.UserCredentials.FindAsync(id);
-        if (userCredential == null)
-        {
-            return NotFound();
-        }
+        var response = await _context.GetUserByIdAsync(id);
 
-        return Ok(new { userCredential.Id, userCredential.Email });
+        return response.ErrorCode switch
+        {
+            DbErrorCode.UserNotFound => NotFound(),
+            DbErrorCode.Ok => Ok(response.UserCredential),
+            _ => NotFound()
+        };
     }
 
     [HttpPost("verify")]
