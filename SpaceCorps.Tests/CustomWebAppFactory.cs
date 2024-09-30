@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using SpaceCorps.Business.Db;
 
 namespace SpaceCorps.Tests;
@@ -25,13 +24,14 @@ public class CustomWebAppFactory : WebApplicationFactory<Program>
                 options.UseSqlServer(_remoteDbConnectionString);
             });
 
-            // Ensure database is created and updated to latest migration
             var serviceProvider = services.BuildServiceProvider();
-            using (var scope = serviceProvider.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-                dbContext.Database.Migrate();
-            }
+            using var scope = serviceProvider.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
+
+            dbContext.Database.Migrate();
         });
     }
 }
