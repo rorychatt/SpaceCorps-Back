@@ -3,7 +3,7 @@ using SpaceCorps.Business.Authorization;
 
 namespace SpaceCorps.Business.Db;
 
-public class DatabaseContext(DbContextOptions options) : DbContext(options)
+public partial class DatabaseContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<UserCredential> UserCredentials { get; set; }
 }

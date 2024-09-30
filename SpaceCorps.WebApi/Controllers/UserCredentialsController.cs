@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SpaceCorps.Business.Authorization;
 using SpaceCorps.Business.Db;
+using SpaceCorps.Business.Dto.Authorization;
 
 namespace SpaceCorps.WebApi.Controllers;
 [ApiController]
@@ -11,18 +12,16 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
     private readonly DatabaseContext _context = context;
 
     [HttpPost("create")]
-    public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
+    public IActionResult CreateUser([FromBody] CreateUserRequest request)
     {
-        if (_context.UserCredentials.Any(u => u.Email == request.Email))
+        var response = _context.CreateUser(request);
+
+        return response.ErrorCode switch
         {
-            return BadRequest("User with this email already exists.");
-        }
-
-        var userCredential = new UserCredential(request.Email, request.Password);
-        _context.UserCredentials.Add(userCredential);
-        await _context.SaveChangesAsync();
-
-        return Ok(new { userCredential.Id, userCredential.Email });
+            DbErrorCode.UserCreated => CreatedAtAction(nameof(GetUser), new { id = response.UserCredential!.Id }, response.UserCredential),
+            DbErrorCode.UserAlreadyExists => Conflict("User already exists"),
+            _ => NotFound()
+        };
     }
 
     [HttpGet("{id}")]
@@ -50,16 +49,4 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
 
         return Ok(new { userCredential.Id, userCredential.Email });
     }
-}
-
-public class CreateUserRequest
-{
-    public string Email { get; set; }
-    public string Password { get; set; }
-}
-
-public class VerifyPasswordRequest
-{
-    public string Email { get; set; }
-    public string Password { get; set; }
 }
