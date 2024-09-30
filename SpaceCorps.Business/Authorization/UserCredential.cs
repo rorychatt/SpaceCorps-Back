@@ -19,13 +19,14 @@ public class UserCredential
     public UserCredential()
     {
         Salt = GenerateSalt();
-        Hash = HashPassword();
+        Hash = HashPassword("", Salt);
     }
 
     public UserCredential(string email, string password) : this()
     {
         Email = email;
         Password = password;
+        Hash = HashPassword(password, Salt);
     }
 
     private static string GenerateSalt()
@@ -35,16 +36,15 @@ public class UserCredential
         return Convert.ToBase64String(saltBytes);
     }
 
-    private string HashPassword()
+    private static string HashPassword(string password, string salt)
     {
-        var hashedBytes = SHA512.HashData(Encoding.UTF8.GetBytes(Password + Salt));
-        return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+        var hashedBytes = SHA512.HashData(Encoding.UTF8.GetBytes(password + salt));
+        return Convert.ToHexString(hashedBytes);
     }
 
     public bool VerifyPassword(string password)
     {
-        var hashedBytes = SHA512.HashData(Encoding.UTF8.GetBytes(password + Salt));
-        var hash = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-        return hash == Hash;
+        var hash = HashPassword(password, Salt);
+        return hash.Equals(Hash, StringComparison.OrdinalIgnoreCase);
     }
 }
