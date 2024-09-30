@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using SpaceCorps.Business.Dto.Authorization;
@@ -35,5 +36,50 @@ public class UserCredentialsApiTesdts(CustomWebAppFactory factory) : IClassFixtu
         var response2 = await httpClient.PostAsJsonAsync("api/UserCredentials/create", request);
 
         response2.StatusCode.Should().Be(HttpStatusCode.Conflict);
+    }
+
+    [Fact]
+    public async Task VerifyPassword_ShouldReturn_NotFound()
+    {
+        const string email = "iamdefinetlynotindb@test3.com";
+        const string password = "password";
+
+        var request = new VerifyPasswordRequest(email, password);
+
+        var response = await httpClient.PostAsJsonAsync("api/UserCredentials/verify", request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task VerifyPassword_ShouldReturn_Unauthorized()
+    {
+        const string email = "iamunauthorized@test4.com";
+        const string password = "password";
+        const string wrongPassword = "wrongpassword";
+
+        var createUserRequest = new CreateUserRequest(email, password);
+        var seedUser = await httpClient.PostAsJsonAsync("api/UserCredentials/create", createUserRequest);
+        seedUser.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        var request = new VerifyPasswordRequest(email, wrongPassword);
+        var verifyPasswordResponse = await httpClient.PostAsJsonAsync("api/UserCredentials/verify", request);
+
+        verifyPasswordResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task VerifyPassword_ShouldReturn_Ok()
+    {
+        const string email = "iamauthorized@test5.com";
+        const string password = "password";
+
+        var createUserRequest = new CreateUserRequest(email, password);
+        var seedUser = await httpClient.PostAsJsonAsync("api/UserCredentials/create", createUserRequest);
+        seedUser.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        var request = new VerifyPasswordRequest(email, password);
+        var verifyPasswordResponse = await httpClient.PostAsJsonAsync("api/UserCredentials/verify", request);
+        verifyPasswordResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 }
