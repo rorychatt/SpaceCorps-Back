@@ -16,21 +16,22 @@ public class UserCredential
     public string Salt { get; init; }
     public string Hash { get; init; }
 
-    public UserCredential(string email, string password)
+    public UserCredential()
     {
-        Email = email;
-        Password = password;
         Salt = GenerateSalt();
         Hash = HashPassword();
     }
 
-    private string GenerateSalt()
+    public UserCredential(string email, string password) : this()
+    {
+        Email = email;
+        Password = password;
+    }
+
+    private static string GenerateSalt()
     {
         byte[] saltBytes = new byte[16];
-        using (var rng = new RNGCryptoServiceProvider())
-        {
-            rng.GetBytes(saltBytes);
-        }
+        RandomNumberGenerator.Fill(saltBytes);
         return Convert.ToBase64String(saltBytes);
     }
 
