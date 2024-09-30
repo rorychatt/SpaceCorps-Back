@@ -5,5 +5,5 @@ namespace SpaceCorps.Business.Db;
 
 public class DatabaseContext(DbContextOptions options) : DbContext(options)
 {
-    private DbSet<UserCredential> UserCredentials { get; set; }
+    public DbSet<UserCredential> UserCredentials { get; set; }
 }
