@@ -20,4 +20,20 @@ public class UserCredentialsApiTesdts(CustomWebAppFactory factory) : IClassFixtu
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
     }
+
+    [Fact]
+    public async Task CreateUserAsync_UserAlreadyExists_ReturnsConflict()
+    {
+        const string email = "iamnottobedublicated@test2.com";
+        const string password = "password";
+
+        var request = new CreateUserRequest(email, password);
+        var response = await httpClient.PostAsJsonAsync("api/UserCredentials/create", request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        var response2 = await httpClient.PostAsJsonAsync("api/UserCredentials/create", request);
+
+        response2.StatusCode.Should().Be(HttpStatusCode.Conflict);
+    }
 }
