@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace SpaceCorps.Business.Db;
 
-public class AuthDbContext(DbContextOptions option) : DbContext(options)
+public class AuthDbContext(DbContextOptions options) : DbContext(options)
 {
 
 }
