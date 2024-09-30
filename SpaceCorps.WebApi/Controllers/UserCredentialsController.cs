@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SpaceCorps.Business.Db;
 using SpaceCorps.Business.Dto.Authorization;
 
@@ -38,14 +37,14 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
     [HttpPost("verify")]
     public async Task<IActionResult> VerifyPassword([FromBody] VerifyPasswordRequest request)
     {
-        var userCredential = await _context.UserCredentials
-            .FirstOrDefaultAsync(u => u.Email == request.Email);
+        var response = await _context.VerifyPasswordAsync(request);
 
-        if (userCredential == null || !userCredential.VerifyPassword(request.Password))
+        return response.DbErrorCode switch
         {
-            return Unauthorized();
-        }
-
-        return Ok(new { userCredential.Id, userCredential.Email });
+            DbErrorCode.UserNotFound => NotFound(),
+            DbErrorCode.Ok => Ok(new { response.Email }),
+            DbErrorCode.WrongPassword => Unauthorized(),
+            _ => NotFound("Unknown error")
+        };
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SpaceCorps.Business.Authorization;
 using SpaceCorps.Business.Dto.Authorization;
 using SpaceCorps.Business.Dto.Db;
@@ -20,5 +21,21 @@ public partial class DatabaseContext
         return new DbUserCredentialsResponse(DbErrorCode.UserCreated, userCredential);
     }
 
+    public async Task<DbUserVerifyPasswordResponse> VerifyPasswordAsync(VerifyPasswordRequest request)
+    {
+        if(!UserCredentials.Any(u => u.Email == request.Email))
+        {
+            return new DbUserVerifyPasswordResponse(DbErrorCode.UserNotFound, null);
+        }
 
+        var userCredential = await UserCredentials.FirstAsync(u => u.Email == request.Email);
+
+        if (!userCredential.VerifyPassword(request.Password))
+        {
+            return new DbUserVerifyPasswordResponse(DbErrorCode.WrongPassword, userCredential.Email);
+        }
+
+        return new DbUserVerifyPasswordResponse(DbErrorCode.Ok, userCredential.Email);
+
+    }
 }
