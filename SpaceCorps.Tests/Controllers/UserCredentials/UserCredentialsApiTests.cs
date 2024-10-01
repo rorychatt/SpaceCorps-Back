@@ -1,8 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Runtime.CompilerServices;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using SpaceCorps.Business.Dto.Authorization;
 
 namespace SpaceCorps.Tests.Controllers.UserCredentials;
