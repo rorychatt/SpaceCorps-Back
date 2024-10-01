@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SpaceCorps.Business.Db;
 
 const string applicationTitle = "SpaceCorpsApi";
-const string version = "v0.0.2-1";
+const string version = "v0.0.3";
 
 var builder = WebApplication.CreateBuilder(args);
 
