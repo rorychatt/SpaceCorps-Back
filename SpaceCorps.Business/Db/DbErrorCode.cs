@@ -5,5 +5,7 @@ public enum DbErrorCode
     FatalError,
     Ok,
     UserAlreadyExists,
-    UserCreated
+    UserCreated,
+    UserNotFound,
+    WrongPassword
 }
