@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SpaceCorps.Business.Db;
 
-const string applicationTitle = "SpaceCorps WebApi";
-const string version = "v0.0.2";
+const string applicationTitle = "SpaceCorpsApi";
+const string version = "v0.0.2-1";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +18,12 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApiDocument(config =>
+{
+    config.DocumentName = applicationTitle;
+    config.Title = applicationTitle;
+    config.Version = version;
+});
 
 builder.Services.AddCors(options =>
 {
@@ -28,13 +33,6 @@ builder.Services.AddCors(options =>
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
-});
-
-builder.Services.AddOpenApiDocument(config =>
-{
-    config.DocumentName = applicationTitle;
-    config.Title = applicationTitle;
-    config.Version = version;
 });
 
 var app = builder.Build();
