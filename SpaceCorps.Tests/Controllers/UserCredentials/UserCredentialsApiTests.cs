@@ -84,6 +84,26 @@ public class UserCredentialsApiTesdts(CustomWebAppFactory factory) : IClassFixtu
     }
 
     [Fact]
+    public async Task VerifyPassword_ShouldReturn_Email()
+    {
+        const string email = "anotheremailteSt@test4.com";
+        const string password = "password";
+
+        var createUserRequest = new CreateUserRequest(email, password);
+
+        var seedUser = await httpClient.PostAsJsonAsync("api/UserCredentials/create", createUserRequest);
+        seedUser.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        var request = new VerifyPasswordRequest(email, password);
+        var verifyPasswordResponse = await httpClient.PostAsJsonAsync("api/UserCredentials/verify", request);
+
+        var response = await verifyPasswordResponse.Content.ReadAsStringAsync();
+
+        response.Should().Be($"{{\"email\":\"{email}\"}}");
+    
+    }
+
+    [Fact]
     public async Task GetUser_ShouldReturn_NotFound()
     {
         var response = await httpClient.GetAsync("api/UserCredentials/0");
