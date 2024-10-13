@@ -23,7 +23,7 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<GetUserCredentialsResponse>> GetUserCredentials(int id)
+    public async Task<ActionResult<GetUserCredentialsResponse>> GetUserCredentialsAsync(int id)
     {
         var response = await _context.GetUserByIdAsync(id);
 
@@ -36,7 +36,7 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
     }
 
     [HttpPost("verify")]
-    public async Task<ActionResult<VerifyPasswordResponse>> VerifyPassword([FromBody] VerifyPasswordRequest request)
+    public async Task<ActionResult<VerifyPasswordResponse>> VerifyPasswordAsync([FromBody] VerifyPasswordRequest request)
     {
         var response = await _context.VerifyPasswordAsync(request);
 
