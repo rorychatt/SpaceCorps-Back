@@ -16,7 +16,7 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
 
         return response.ErrorCode switch
         {
-            DbErrorCode.UserCreated => new CreateUserResponse(response.UserCredential!.Email, true),
+            DbErrorCode.UserCreated => Created("api/UserCredentials/create", new CreateUserResponse(response.UserCredential!.Email, IsCreated: true)),
             DbErrorCode.UserAlreadyExists => Conflict("User already exists"),
             _ => NotFound()
         };
