@@ -16,21 +16,21 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
 
         return response.ErrorCode switch
         {
-            DbErrorCode.UserCreated => CreatedAtAction(nameof(GetUser), new { id = response.UserCredential!.Id }, response.UserCredential),
+            DbErrorCode.UserCreated => CreatedAtAction(nameof(GetUserCredentials), new { id = response.UserCredential!.Id }, response.UserCredential),
             DbErrorCode.UserAlreadyExists => Conflict("User already exists"),
             _ => NotFound()
         };
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetUser(int id)
+    public async Task<ActionResult<GetUserCredentialsResponse>> GetUserCredentials(int id)
     {
         var response = await _context.GetUserByIdAsync(id);
 
         return response.ErrorCode switch
         {
             DbErrorCode.UserNotFound => NotFound(),
-            DbErrorCode.Ok => Ok(response.UserCredential),
+            DbErrorCode.Ok => new GetUserCredentialsResponse(response.UserCredential!),
             _ => NotFound()
         };
     }
