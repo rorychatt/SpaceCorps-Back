@@ -10,13 +10,13 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
     private readonly DatabaseContext _context = context;
 
     [HttpPost("create")]
-    public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserRequest request)
+    public async Task<ActionResult<CreateUserResponse>> CreateUserAsync([FromBody] CreateUserRequest request)
     {
         var response = await _context.CreateUserAsync(request);
 
         return response.ErrorCode switch
         {
-            DbErrorCode.UserCreated => CreatedAtAction(nameof(GetUserCredentials), new { id = response.UserCredential!.Id }, response.UserCredential),
+            DbErrorCode.UserCreated => new CreateUserResponse(response.UserCredential!.Email, true),
             DbErrorCode.UserAlreadyExists => Conflict("User already exists"),
             _ => NotFound()
         };
