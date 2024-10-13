@@ -95,10 +95,9 @@ public class UserCredentialsApiTesdts(CustomWebAppFactory factory) : IClassFixtu
         var request = new VerifyPasswordRequest(email, password);
         var verifyPasswordResponse = await httpClient.PostAsJsonAsync("api/UserCredentials/verify", request);
 
-        var response = await verifyPasswordResponse.Content.ReadAsStringAsync();
+        var response = await verifyPasswordResponse.Content.ReadFromJsonAsync<VerifyPasswordResponse>();
 
-        response.Should().Be($"{{\"email\":\"{email}\"}}");
-    
+        response!.Email.Should().Be(email);
     }
 
     [Fact]
