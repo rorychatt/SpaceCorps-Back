@@ -20,7 +20,7 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
         };
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<GetUserCredentialsResponse>> GetUserCredentialsAsync(int id)
     {
         var response = await context.GetUserByIdAsync(id);
