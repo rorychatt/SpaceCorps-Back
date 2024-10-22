@@ -1,5 +1,6 @@
 namespace SpaceCorps.Business.Engine;
 
-public class Game : IGame
+public interface IGame
 {
+
 }
