@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SpaceCorps.Business.Db;
+using SpaceCorps.Business.Engine;
 
 const string applicationTitle = "SpaceCorpsApi";
 const string version = "v0.0.3";
@@ -35,6 +36,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddSingleton<Game>();
 
 var app = builder.Build();
 
