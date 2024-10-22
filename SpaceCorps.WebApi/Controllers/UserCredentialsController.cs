@@ -7,12 +7,10 @@ namespace SpaceCorps.WebApi.Controllers;
 [Route("api/[controller]")]
 public class UserCredentialsController(DatabaseContext context) : ControllerBase
 {
-    private readonly DatabaseContext _context = context;
-
     [HttpPost("create")]
     public async Task<ActionResult<CreateUserResponse>> CreateUserAsync([FromBody] CreateUserRequest request)
     {
-        var response = await _context.CreateUserAsync(request);
+        var response = await context.CreateUserAsync(request);
 
         return response.ErrorCode switch
         {
@@ -25,7 +23,7 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<GetUserCredentialsResponse>> GetUserCredentialsAsync(int id)
     {
-        var response = await _context.GetUserByIdAsync(id);
+        var response = await context.GetUserByIdAsync(id);
 
         return response.ErrorCode switch
         {
@@ -38,7 +36,7 @@ public class UserCredentialsController(DatabaseContext context) : ControllerBase
     [HttpPost("verify")]
     public async Task<ActionResult<VerifyPasswordResponse>> VerifyPasswordAsync([FromBody] VerifyPasswordRequest request)
     {
-        var response = await _context.VerifyPasswordAsync(request);
+        var response = await context.VerifyPasswordAsync(request);
 
         return response.DbErrorCode switch
         {
