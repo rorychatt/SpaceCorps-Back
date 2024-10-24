@@ -27,4 +27,8 @@
     <ProjectReference Include="..\SpaceCorps.WebApi\SpaceCorps.WebApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Game\" />
+  </ItemGroup>
+
 </Project>
