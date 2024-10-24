@@ -1,4 +1,4 @@
-namespace SpaceCorps.Business.Entity;
+namespace SpaceCorps.Business.EntityLogic;
 
 public class Entity : IEntity
 {
