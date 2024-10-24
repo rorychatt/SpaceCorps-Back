@@ -1,6 +1,6 @@
 using SpaceCorps.Business.Db;
 
-namespace SpaceCorps.Business.Dto.Authorization;
+namespace SpaceCorps.Business.Dto.Db;
 
 public record DbUserVerifyPasswordResponse()
 {

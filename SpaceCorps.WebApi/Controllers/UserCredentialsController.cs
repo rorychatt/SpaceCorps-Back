@@ -7,43 +7,41 @@ namespace SpaceCorps.WebApi.Controllers;
 [Route("api/[controller]")]
 public class UserCredentialsController(DatabaseContext context) : ControllerBase
 {
-    private readonly DatabaseContext _context = context;
-
     [HttpPost("create")]
-    public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserRequest request)
+    public async Task<ActionResult<CreateUserResponse>> CreateUserAsync([FromBody] CreateUserRequest request)
     {
-        var response = await _context.CreateUserAsync(request);
+        var response = await context.CreateUserAsync(request);
 
         return response.ErrorCode switch
         {
-            DbErrorCode.UserCreated => CreatedAtAction(nameof(GetUser), new { id = response.UserCredential!.Id }, response.UserCredential),
+            DbErrorCode.UserCreated => Created("api/UserCredentials/create", new CreateUserResponse(response.UserCredential!.Email, IsCreated: true)),
             DbErrorCode.UserAlreadyExists => Conflict("User already exists"),
             _ => NotFound()
         };
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetUser(int id)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<GetUserCredentialsResponse>> GetUserCredentialsAsync(int id)
     {
-        var response = await _context.GetUserByIdAsync(id);
+        var response = await context.GetUserByIdAsync(id);
 
         return response.ErrorCode switch
         {
             DbErrorCode.UserNotFound => NotFound(),
-            DbErrorCode.Ok => Ok(response.UserCredential),
+            DbErrorCode.Ok => new GetUserCredentialsResponse(response.UserCredential!),
             _ => NotFound()
         };
     }
 
     [HttpPost("verify")]
-    public async Task<IActionResult> VerifyPassword([FromBody] VerifyPasswordRequest request)
+    public async Task<ActionResult<VerifyPasswordResponse>> VerifyPasswordAsync([FromBody] VerifyPasswordRequest request)
     {
-        var response = await _context.VerifyPasswordAsync(request);
+        var response = await context.VerifyPasswordAsync(request);
 
         return response.DbErrorCode switch
         {
             DbErrorCode.UserNotFound => NotFound(),
-            DbErrorCode.Ok => Ok(new { response.Email }),
+            DbErrorCode.Ok => new VerifyPasswordResponse(response.Email!, IsLoggedIn: true),
             DbErrorCode.WrongPassword => Unauthorized(),
             _ => NotFound("Unknown error")
         };
