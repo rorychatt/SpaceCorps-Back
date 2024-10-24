@@ -36,7 +36,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddSingleton<Game>();
+builder.Services.AddSingleton<IGame, Game>();
 
 var app = builder.Build();
 
